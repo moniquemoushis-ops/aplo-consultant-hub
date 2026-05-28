@@ -1,0 +1,129 @@
+import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
+import { supabase } from '../lib/supabase'
+import PhaseBadge from '../components/PhaseBadge'
+
+// Placeholder modules shown when no data exists in Supabase yet
+// Replace with real content once modules are added in the admin panel
+const PLACEHOLDER_MODULES = [
+  {
+    id: 'placeholder-1',
+    title: 'Engagement Foundations',
+    description: 'Understand the groundwork needed before your first client meeting — from scoping the work to aligning internal expectations.',
+    phase: 'before',
+    lesson_count: 2,
+  },
+  {
+    id: 'placeholder-2',
+    title: 'Running the Engagement',
+    description: 'Practical frameworks for managing client relationships, steering committees, and deliverable reviews during active work.',
+    phase: 'during',
+    lesson_count: 2,
+  },
+]
+
+const PHASES = ['before', 'during', 'after']
+const PHASE_LABELS = { before: 'Before', during: 'During', after: 'After' }
+
+export default function ModuleLibrary() {
+  const [modules, setModules] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    fetchModules()
+  }, [])
+
+  async function fetchModules() {
+    setLoading(true)
+    const { data, error: err } = await supabase
+      .from('modules')
+      .select('id, title, description, phase, display_order, published')
+      .eq('published', true)
+      .order('display_order', { ascending: true })
+
+    if (err) {
+      setError(err.message)
+      setLoading(false)
+      return
+    }
+
+    // Attach lesson counts
+    if (data && data.length > 0) {
+      const ids = data.map(m => m.id)
+      const { data: lessons } = await supabase
+        .from('lessons')
+        .select('module_id')
+        .in('module_id', ids)
+        .eq('published', true)
+
+      const countMap = {}
+      ;(lessons ?? []).forEach(l => {
+        countMap[l.module_id] = (countMap[l.module_id] ?? 0) + 1
+      })
+
+      setModules(data.map(m => ({ ...m, lesson_count: countMap[m.id] ?? 0 })))
+    } else {
+      // No data yet — show placeholders so the page renders with content
+      setModules(PLACEHOLDER_MODULES)
+    }
+
+    setLoading(false)
+  }
+
+  if (loading) {
+    return (
+      <div className="loading-state">
+        <div className="spinner" />
+        Loading modules…
+      </div>
+    )
+  }
+
+  return (
+    <div className="page-fade page-inner">
+      <div className="page-header">
+        <h1 className="page-title">Module library</h1>
+        <p className="page-subtitle">Browse all learning content organised by engagement phase</p>
+      </div>
+
+      {error && <div className="error-msg">{error}</div>}
+
+      {PHASES.map(phase => {
+        const phaseModules = modules.filter(m => m.phase === phase)
+        if (phaseModules.length === 0) return null
+
+        return (
+          <div key={phase} className="phase-section">
+            <div className="phase-header">
+              <div className={`phase-dot phase-dot-${phase}`} />
+              <h2 className="phase-title">{PHASE_LABELS[phase]}</h2>
+            </div>
+            <div className="module-grid">
+              {phaseModules.map(mod => (
+                <Link
+                  key={mod.id}
+                  to={mod.id.startsWith('placeholder') ? '/learn' : `/learn/${mod.id}`}
+                  className="card module-card"
+                >
+                  <div className="module-card-title">{mod.title}</div>
+                  <div className="module-card-desc">{mod.description}</div>
+                  <div className="module-card-meta">
+                    <span className="module-card-count">
+                      {mod.lesson_count} {mod.lesson_count === 1 ? 'lesson' : 'lessons'}
+                    </span>
+                    <PhaseBadge phase={mod.phase} />
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )
+      })}
+
+      {modules.length === 0 && !error && (
+        <div className="empty-state">No published modules yet.</div>
+      )}
+    </div>
+  )
+}
