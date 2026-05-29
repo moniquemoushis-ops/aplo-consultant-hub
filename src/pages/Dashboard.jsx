@@ -4,7 +4,6 @@ import { Button, Card, Spinner } from '@heroui/react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import ProgressBar from '../components/ProgressBar'
-import PhaseBadge from '../components/PhaseBadge'
 
 const PLACEHOLDER_RECENT = [
   { id: 'p1', title: 'Scoping the Engagement', moduleId: 'p-mod-1', moduleName: 'Engagement Foundations' },

@@ -1,8 +1,13 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Card, Spinner, Switch } from '@heroui/react'
+import { Card, Chip, Spinner, Switch } from '@heroui/react'
 import { supabase } from '../../lib/supabase'
-import PhaseBadge from '../../components/PhaseBadge'
+
+const PHASE_CHIP = {
+  before: { color: 'warning', label: 'Before' },
+  during: { color: 'accent',  label: 'During' },
+  after:  { color: 'success', label: 'After' },
+}
 
 export default function ModuleList() {
   const [modules, setModules] = useState([])
@@ -104,7 +109,12 @@ export default function ModuleList() {
               {modules.map(mod => (
                 <tr key={mod.id}>
                   <td style={{ fontWeight: 600 }}>{mod.title}</td>
-                  <td><PhaseBadge phase={mod.phase} /></td>
+                  <td>
+                    {(() => {
+                      const c = PHASE_CHIP[mod.phase] ?? { color: 'default', label: mod.phase }
+                      return <Chip color={c.color} variant="soft" size="sm">{c.label}</Chip>
+                    })()}
+                  </td>
                   <td>{lessonCounts[mod.id] ?? 0}</td>
                   <td>{mod.display_order}</td>
                   <td>

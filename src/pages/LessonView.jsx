@@ -1,9 +1,15 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { Button, Separator, Spinner, TextField, TextArea, Label } from '@heroui/react'
+import { Button, Chip, Separator, Spinner, TextField, TextArea, Label } from '@heroui/react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
-import LessonTypeBadge from '../components/LessonTypeBadge'
+
+const TYPE_CHIP = {
+  article:  { color: 'default', label: 'Article' },
+  checklist: { color: 'accent',  label: 'Checklist' },
+  tool:     { color: 'danger',  label: 'Tool' },
+  template: { color: 'warning', label: 'Template' },
+}
 
 function renderContent(text) {
   if (!text) return null
@@ -117,8 +123,11 @@ export default function LessonView() {
 
       {error && <div className="error-msg">{error}</div>}
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-        <LessonTypeBadge type={lesson.lesson_type} />
+      <div className="flex items-center gap-2 mb-3">
+        {(() => {
+          const chip = TYPE_CHIP[lesson.lesson_type] ?? { color: 'default', label: lesson.lesson_type }
+          return <Chip color={chip.color} variant="soft" size="sm">{chip.label}</Chip>
+        })()}
       </div>
 
       <h1 className="page-title" style={{ marginBottom: 32 }}>{lesson.title}</h1>

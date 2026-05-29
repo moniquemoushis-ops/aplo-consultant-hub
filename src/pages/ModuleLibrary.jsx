@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Card, Spinner } from '@heroui/react'
+import { Card, Chip, Spinner } from '@heroui/react'
 import { supabase } from '../lib/supabase'
-import PhaseBadge from '../components/PhaseBadge'
 
 const PLACEHOLDER_MODULES = [
   {
@@ -23,6 +22,7 @@ const PLACEHOLDER_MODULES = [
 
 const PHASES = ['before', 'during', 'after']
 const PHASE_LABELS = { before: 'Before', during: 'During', after: 'After' }
+const PHASE_COLORS = { before: 'warning', during: 'accent', after: 'success' }
 
 export default function ModuleLibrary() {
   const [modules, setModules] = useState([])
@@ -101,7 +101,7 @@ export default function ModuleLibrary() {
                 <Link
                   key={mod.id}
                   to={mod.id.startsWith('placeholder') ? '/learn' : `/learn/${mod.id}`}
-                  style={{ textDecoration: 'none' }}
+                  className="no-underline"
                 >
                   <Card className="module-card">
                     <div className="module-card-title">{mod.title}</div>
@@ -110,7 +110,13 @@ export default function ModuleLibrary() {
                       <span className="module-card-count">
                         {mod.lesson_count} {mod.lesson_count === 1 ? 'lesson' : 'lessons'}
                       </span>
-                      <PhaseBadge phase={mod.phase} />
+                      <Chip
+                        color={PHASE_COLORS[mod.phase] ?? 'default'}
+                        variant="soft"
+                        size="sm"
+                      >
+                        {PHASE_LABELS[mod.phase] ?? mod.phase}
+                      </Chip>
                     </div>
                   </Card>
                 </Link>

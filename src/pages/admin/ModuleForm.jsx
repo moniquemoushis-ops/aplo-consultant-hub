@@ -1,13 +1,18 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import {
-  Button, Card, Spinner, Switch,
+  Button, Card, Chip, Spinner, Switch,
   TextField, Label, Input, TextArea,
   Select, ListBox, ListBoxItem,
 } from '@heroui/react'
-
 import { supabase } from '../../lib/supabase'
-import LessonTypeBadge from '../../components/LessonTypeBadge'
+
+const TYPE_CHIP = {
+  article:  { color: 'default', label: 'Article' },
+  checklist: { color: 'accent',  label: 'Checklist' },
+  tool:     { color: 'danger',  label: 'Tool' },
+  template: { color: 'warning', label: 'Template' },
+}
 
 const EMPTY_FORM = { title: '', description: '', phase: 'before', display_order: 1, published: false }
 
@@ -181,12 +186,17 @@ export default function ModuleForm() {
                   {lessons.map(lesson => (
                     <tr key={lesson.id}>
                       <td style={{ fontWeight: 600 }}>{lesson.title}</td>
-                      <td><LessonTypeBadge type={lesson.lesson_type} /></td>
+                      <td>
+                        {(() => {
+                          const c = TYPE_CHIP[lesson.lesson_type] ?? { color: 'default', label: lesson.lesson_type }
+                          return <Chip color={c.color} variant="soft" size="sm">{c.label}</Chip>
+                        })()}
+                      </td>
                       <td>{lesson.display_order}</td>
                       <td>
-                        <span className={`badge ${lesson.published ? 'badge-answered' : 'badge-dismissed'}`}>
+                        <Chip color={lesson.published ? 'success' : 'default'} variant="soft" size="sm">
                           {lesson.published ? 'Yes' : 'No'}
-                        </span>
+                        </Chip>
                       </td>
                       <td>
                         <Link to={`/admin/lessons/${lesson.id}`} className="btn btn-secondary btn-sm">Edit</Link>

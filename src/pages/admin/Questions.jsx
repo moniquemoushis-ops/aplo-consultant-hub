@@ -1,7 +1,12 @@
 import { useEffect, useState } from 'react'
-import { Button, Card, Spinner, Tabs, Tab, TabList, TabPanel, TextField, TextArea, Label } from '@heroui/react'
+import { Button, Card, Chip, Spinner, Tabs, Tab, TabList, TabPanel, TextField, TextArea, Label } from '@heroui/react'
 import { supabase } from '../../lib/supabase'
-import StatusBadge from '../../components/StatusBadge'
+
+const STATUS_CHIP = {
+  open:      { color: 'warning', label: 'Open' },
+  answered:  { color: 'success', label: 'Answered' },
+  dismissed: { color: 'default', label: 'Dismissed' },
+}
 
 const TABS = ['all', 'open', 'answered']
 
@@ -90,7 +95,10 @@ export default function Questions() {
             <div className="question-text">{q.question_text}</div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
-            <StatusBadge status={q.status} />
+            {(() => {
+                      const c = STATUS_CHIP[q.status] ?? { color: 'default', label: q.status }
+                      return <Chip color={c.color} variant="soft" size="sm">{c.label}</Chip>
+                    })()}
             <button className="question-expand">
               {expanded === q.id ? '−' : '+'}
             </button>

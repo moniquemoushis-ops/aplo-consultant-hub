@@ -1,10 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { Card, Spinner } from '@heroui/react'
+import { Card, Chip, Spinner } from '@heroui/react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
-import PhaseBadge from '../components/PhaseBadge'
-import LessonTypeBadge from '../components/LessonTypeBadge'
 
 const PLACEHOLDER_LESSONS = {
   'placeholder-1': [
@@ -20,6 +18,19 @@ const PLACEHOLDER_LESSONS = {
 const PLACEHOLDER_MODULES = {
   'placeholder-1': { id: 'placeholder-1', title: 'Engagement Foundations', description: 'Understand the groundwork needed before your first client meeting.', phase: 'before' },
   'placeholder-2': { id: 'placeholder-2', title: 'Running the Engagement', description: 'Practical frameworks for managing client relationships during active work.', phase: 'during' },
+}
+
+const PHASE_CHIP = {
+  before: { color: 'warning', label: 'Before' },
+  during: { color: 'accent', label: 'During' },
+  after: { color: 'success', label: 'After' },
+}
+
+const TYPE_CHIP = {
+  article:  { color: 'default', label: 'Article' },
+  checklist: { color: 'accent',  label: 'Checklist' },
+  tool:     { color: 'danger',  label: 'Tool' },
+  template: { color: 'warning', label: 'Template' },
 }
 
 export default function ModuleDetail() {
@@ -83,6 +94,8 @@ export default function ModuleDetail() {
     return <div className="error-msg">Module not found.</div>
   }
 
+  const phaseChip = PHASE_CHIP[module.phase] ?? { color: 'default', label: module.phase }
+
   return (
     <div className="page-fade page-inner">
       <div className="breadcrumb">
@@ -92,8 +105,8 @@ export default function ModuleDetail() {
       </div>
 
       <div className="page-header">
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
-          <PhaseBadge phase={module.phase} />
+        <div className="flex items-center gap-2 mb-2">
+          <Chip color={phaseChip.color} variant="soft" size="sm">{phaseChip.label}</Chip>
         </div>
         <h1 className="page-title">{module.title}</h1>
         {module.description && (
@@ -107,19 +120,22 @@ export default function ModuleDetail() {
         <div className="empty-state">No lessons published yet.</div>
       ) : (
         <div className="lesson-list">
-          {lessons.map(lesson => (
-            <Link
-              key={lesson.id}
-              to={lesson.id.startsWith('pl-') ? '#' : `/learn/${moduleId}/${lesson.id}`}
-              className="lesson-row"
-            >
-              <LessonTypeBadge type={lesson.lesson_type} />
-              <span className="lesson-row-title">{lesson.title}</span>
-              {viewedIds.has(lesson.id) && (
-                <span className="lesson-viewed">Viewed</span>
-              )}
-            </Link>
-          ))}
+          {lessons.map(lesson => {
+            const chip = TYPE_CHIP[lesson.lesson_type] ?? { color: 'default', label: lesson.lesson_type }
+            return (
+              <Link
+                key={lesson.id}
+                to={lesson.id.startsWith('pl-') ? '#' : `/learn/${moduleId}/${lesson.id}`}
+                className="lesson-row"
+              >
+                <Chip color={chip.color} variant="soft" size="sm">{chip.label}</Chip>
+                <span className="lesson-row-title">{lesson.title}</span>
+                {viewedIds.has(lesson.id) && (
+                  <span className="lesson-viewed">Viewed</span>
+                )}
+              </Link>
+            )
+          })}
         </div>
       )}
 
