@@ -95,25 +95,25 @@ export default function ModuleForm() {
 
       {error && <div className="error-msg">{error}</div>}
 
-      <Card style={{ padding: 28, marginBottom: 28 }}>
+      <Card className="p-7 mb-7">
         <form onSubmit={handleSubmit}>
-          <TextField value={form.title} onChange={field('title')} isRequired fullWidth style={{ marginBottom: 20 }}>
-            <Label className="form-label">Title</Label>
+          <TextField value={form.title} onChange={field('title')} isRequired fullWidth className="mb-5">
+            <Label>Title</Label>
             <Input placeholder="e.g. Engagement Foundations" />
           </TextField>
 
-          <TextField value={form.description} onChange={field('description')} fullWidth style={{ marginBottom: 20 }}>
-            <Label className="form-label">Description</Label>
+          <TextField value={form.description} onChange={field('description')} fullWidth className="mb-5">
+            <Label>Description</Label>
             <TextArea placeholder="Brief description of what this module covers" rows={3} />
           </TextField>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 20 }}>
+          <div className="grid grid-cols-2 gap-4 mb-5">
             <Select
               selectedKey={form.phase}
               onSelectionChange={(key) => setForm(prev => ({ ...prev, phase: String(key) }))}
               fullWidth
             >
-              <Label className="form-label">Phase</Label>
+              <Label>Phase</Label>
               <Select.Trigger>
                 <Select.Value />
                 <Select.Indicator />
@@ -127,30 +127,24 @@ export default function ModuleForm() {
               </Select.Popover>
             </Select>
 
-            <div className="form-group">
-              <label className="form-label" htmlFor="display_order">Display order</label>
-              <input
-                id="display_order"
-                name="display_order"
-                type="number"
-                className="form-input"
-                value={form.display_order}
-                onChange={e => setForm(prev => ({ ...prev, display_order: e.target.value }))}
-                min={1}
-              />
-            </div>
+            <TextField
+              value={String(form.display_order)}
+              onChange={field('display_order')}
+              fullWidth
+            >
+              <Label>Display order</Label>
+              <Input type="number" min={1} />
+            </TextField>
           </div>
 
-          <div style={{ marginBottom: 24 }}>
+          <div className="mb-6">
             <Switch isSelected={form.published} onChange={field('published')}>
               <Switch.Control><Switch.Thumb /></Switch.Control>
-              <span style={{ marginLeft: 8, fontSize: 14, fontWeight: 500 }}>
-                Published (visible to consultants)
-              </span>
+              <span className="ml-2 text-sm font-medium">Published (visible to consultants)</span>
             </Switch>
           </div>
 
-          <div style={{ display: 'flex', gap: 10 }}>
+          <div className="flex gap-2">
             <Button type="submit" variant="primary" isDisabled={saving}>
               {saving ? 'Saving…' : 'Save module'}
             </Button>
@@ -165,7 +159,9 @@ export default function ModuleForm() {
             <div className="section-title" style={{ margin: 0, border: 'none', paddingBottom: 0 }}>
               Lessons in this module
             </div>
-            <Link to={`/admin/lessons/new?moduleId=${moduleId}`} className="btn btn-secondary btn-sm">+ Add lesson</Link>
+            <Link to={`/admin/lessons/new?moduleId=${moduleId}`} className="btn btn-secondary btn-sm">
+              + Add lesson
+            </Link>
           </div>
 
           {lessons.length === 0 ? (
@@ -183,26 +179,24 @@ export default function ModuleForm() {
                   </tr>
                 </thead>
                 <tbody>
-                  {lessons.map(lesson => (
-                    <tr key={lesson.id}>
-                      <td style={{ fontWeight: 600 }}>{lesson.title}</td>
-                      <td>
-                        {(() => {
-                          const c = TYPE_CHIP[lesson.lesson_type] ?? { color: 'default', label: lesson.lesson_type }
-                          return <Chip color={c.color} variant="soft" size="sm">{c.label}</Chip>
-                        })()}
-                      </td>
-                      <td>{lesson.display_order}</td>
-                      <td>
-                        <Chip color={lesson.published ? 'success' : 'default'} variant="soft" size="sm">
-                          {lesson.published ? 'Yes' : 'No'}
-                        </Chip>
-                      </td>
-                      <td>
-                        <Link to={`/admin/lessons/${lesson.id}`} className="btn btn-secondary btn-sm">Edit</Link>
-                      </td>
-                    </tr>
-                  ))}
+                  {lessons.map(lesson => {
+                    const c = TYPE_CHIP[lesson.lesson_type] ?? { color: 'default', label: lesson.lesson_type }
+                    return (
+                      <tr key={lesson.id}>
+                        <td style={{ fontWeight: 600 }}>{lesson.title}</td>
+                        <td><Chip color={c.color} variant="soft" size="sm">{c.label}</Chip></td>
+                        <td>{lesson.display_order}</td>
+                        <td>
+                          <Chip color={lesson.published ? 'success' : 'default'} variant="soft" size="sm">
+                            {lesson.published ? 'Yes' : 'No'}
+                          </Chip>
+                        </td>
+                        <td>
+                          <Link to={`/admin/lessons/${lesson.id}`} className="btn btn-secondary btn-sm">Edit</Link>
+                        </td>
+                      </tr>
+                    )
+                  })}
                 </tbody>
               </table>
             </Card>

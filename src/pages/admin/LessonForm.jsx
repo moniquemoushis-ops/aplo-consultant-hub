@@ -108,21 +108,21 @@ export default function LessonForm() {
 
       {error && <div className="error-msg">{error}</div>}
 
-      <Card style={{ padding: 28 }}>
+      <Card className="p-7">
         <form onSubmit={handleSubmit}>
-          <TextField value={form.title} onChange={field('title')} isRequired fullWidth style={{ marginBottom: 20 }}>
-            <Label className="form-label">Title</Label>
+          <TextField value={form.title} onChange={field('title')} isRequired fullWidth className="mb-5">
+            <Label>Title</Label>
             <Input placeholder="e.g. Scoping the Engagement" />
           </TextField>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 20 }}>
+          <div className="grid grid-cols-2 gap-4 mb-5">
             <Select
               selectedKey={form.module_id || null}
               onSelectionChange={(key) => setForm(prev => ({ ...prev, module_id: String(key) }))}
               isRequired
               fullWidth
             >
-              <Label className="form-label">Module</Label>
+              <Label>Module</Label>
               <Select.Trigger>
                 <Select.Value placeholder="Select a module…" />
                 <Select.Indicator />
@@ -141,7 +141,7 @@ export default function LessonForm() {
               onSelectionChange={(key) => setForm(prev => ({ ...prev, lesson_type: String(key) }))}
               fullWidth
             >
-              <Label className="form-label">Type</Label>
+              <Label>Type</Label>
               <Select.Trigger>
                 <Select.Value />
                 <Select.Indicator />
@@ -157,45 +157,34 @@ export default function LessonForm() {
             </Select>
           </div>
 
-          <div className="form-group">
-            <label className="form-label" htmlFor="display_order">Display order</label>
-            <input
-              id="display_order"
-              name="display_order"
-              type="number"
-              className="form-input"
-              value={form.display_order}
-              onChange={e => setForm(prev => ({ ...prev, display_order: e.target.value }))}
-              min={1}
-              style={{ maxWidth: 120 }}
-            />
-          </div>
+          <TextField
+            value={String(form.display_order)}
+            onChange={field('display_order')}
+            className="mb-5"
+            style={{ maxWidth: 120 }}
+          >
+            <Label>Display order</Label>
+            <Input type="number" min={1} />
+          </TextField>
 
-          <div style={{ marginBottom: 20 }}>
+          <div className="mb-5">
             <Switch isSelected={form.published} onChange={field('published')}>
               <Switch.Control><Switch.Thumb /></Switch.Control>
-              <span style={{ marginLeft: 8, fontSize: 14, fontWeight: 500 }}>
-                Published (visible to consultants)
-              </span>
+              <span className="ml-2 text-sm font-medium">Published (visible to consultants)</span>
             </Switch>
           </div>
 
-          <TextField value={form.content} onChange={field('content')} fullWidth style={{ marginBottom: 20 }}>
-            <Label className="form-label">Content</Label>
-            <p style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 6 }}>
-              Use{' '}
-              <code style={{ background: 'var(--bg)', padding: '1px 5px', borderRadius: 4, fontSize: 12 }}>**bold**</code>
-              {' '}for bold,{' '}
-              <code style={{ background: 'var(--bg)', padding: '1px 5px', borderRadius: 4, fontSize: 12 }}>*italic*</code>
-              {' '}for italic, and blank lines for paragraph breaks.
+          <TextField value={form.content} onChange={field('content')} fullWidth className="mb-5">
+            <Label>Content</Label>
+            <p className="text-xs text-[var(--text-secondary)] mb-1.5">
+              Use <code className="bg-[var(--bg)] px-1 py-0.5 rounded text-xs">**bold**</code> for bold,{' '}
+              <code className="bg-[var(--bg)] px-1 py-0.5 rounded text-xs">*italic*</code> for italic,
+              and blank lines for paragraph breaks.
             </p>
-            <TextArea
-              className="large"
-              placeholder="Write your lesson content here…"
-            />
+            <TextArea className="large" placeholder="Write your lesson content here…" />
           </TextField>
 
-          <div style={{ display: 'flex', gap: 10 }}>
+          <div className="flex gap-2">
             <Button type="submit" variant="primary" isDisabled={saving}>
               {saving ? 'Saving…' : 'Save lesson'}
             </Button>

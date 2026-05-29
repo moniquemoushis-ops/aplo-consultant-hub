@@ -41,9 +41,9 @@ export default function Login() {
             isRequired
             autoFocus
             fullWidth
-            style={{ marginBottom: 20 }}
+            className="mb-5"
           >
-            <Label className="form-label">Email</Label>
+            <Label>Email</Label>
             <Input placeholder="you@example.com" />
           </TextField>
 
@@ -53,9 +53,9 @@ export default function Login() {
             type="password"
             isRequired
             fullWidth
-            style={{ marginBottom: 24 }}
+            className="mb-6"
           >
-            <Label className="form-label">Password</Label>
+            <Label>Password</Label>
             <Input placeholder="••••••••" />
           </TextField>
 
