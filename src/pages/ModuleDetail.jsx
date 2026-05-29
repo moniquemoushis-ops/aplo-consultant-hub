@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
+import { Card, Spinner } from '@heroui/react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import PhaseBadge from '../components/PhaseBadge'
 import LessonTypeBadge from '../components/LessonTypeBadge'
 
-// Placeholder lessons shown when the module has no real lessons yet
-// Replace with real lessons added in the admin panel
 const PLACEHOLDER_LESSONS = {
   'placeholder-1': [
     { id: 'pl-1', title: 'Scoping the Engagement', lesson_type: 'article', display_order: 1 },
@@ -74,7 +73,7 @@ export default function ModuleDetail() {
   if (loading) {
     return (
       <div className="loading-state">
-        <div className="spinner" />
+        <Spinner />
         Loading module…
       </div>
     )

@@ -1,7 +1,12 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
+import {
+  Button, Card, Spinner, Switch,
+  TextField, Label, Input, TextArea,
+  Select, ListBox, ListBoxItem,
+} from '@heroui/react'
+
 import { supabase } from '../../lib/supabase'
-import PhaseBadge from '../../components/PhaseBadge'
 import LessonTypeBadge from '../../components/LessonTypeBadge'
 
 const EMPTY_FORM = { title: '', description: '', phase: 'before', display_order: 1, published: false }
@@ -42,9 +47,8 @@ export default function ModuleForm() {
     setLoading(false)
   }
 
-  function handleChange(e) {
-    const { name, value, type, checked } = e.target
-    setForm(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }))
+  function field(name) {
+    return (value) => setForm(prev => ({ ...prev, [name]: value }))
   }
 
   async function handleSubmit(e) {
@@ -72,7 +76,7 @@ export default function ModuleForm() {
   if (loading) {
     return (
       <div className="loading-state">
-        <div className="spinner" />
+        <Spinner />
         Loading…
       </div>
     )
@@ -86,43 +90,37 @@ export default function ModuleForm() {
 
       {error && <div className="error-msg">{error}</div>}
 
-      <div className="card" style={{ padding: 28, marginBottom: 28 }}>
+      <Card style={{ padding: 28, marginBottom: 28 }}>
         <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label className="form-label" htmlFor="title">Title</label>
-            <input
-              id="title"
-              name="title"
-              className="form-input"
-              value={form.title}
-              onChange={handleChange}
-              required
-              placeholder="e.g. Engagement Foundations"
-            />
-          </div>
+          <TextField value={form.title} onChange={field('title')} isRequired fullWidth style={{ marginBottom: 20 }}>
+            <Label className="form-label">Title</Label>
+            <Input placeholder="e.g. Engagement Foundations" />
+          </TextField>
 
-          <div className="form-group">
-            <label className="form-label" htmlFor="description">Description</label>
-            <textarea
-              id="description"
-              name="description"
-              className="form-textarea"
-              value={form.description}
-              onChange={handleChange}
-              placeholder="Brief description of what this module covers"
-              rows={3}
-            />
-          </div>
+          <TextField value={form.description} onChange={field('description')} fullWidth style={{ marginBottom: 20 }}>
+            <Label className="form-label">Description</Label>
+            <TextArea placeholder="Brief description of what this module covers" rows={3} />
+          </TextField>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-            <div className="form-group">
-              <label className="form-label" htmlFor="phase">Phase</label>
-              <select id="phase" name="phase" className="form-select" value={form.phase} onChange={handleChange}>
-                <option value="before">Before</option>
-                <option value="during">During</option>
-                <option value="after">After</option>
-              </select>
-            </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 20 }}>
+            <Select
+              selectedKey={form.phase}
+              onSelectionChange={(key) => setForm(prev => ({ ...prev, phase: String(key) }))}
+              fullWidth
+            >
+              <Label className="form-label">Phase</Label>
+              <Select.Trigger>
+                <Select.Value />
+                <Select.Indicator />
+              </Select.Trigger>
+              <Select.Popover>
+                <ListBox>
+                  <ListBoxItem id="before">Before</ListBoxItem>
+                  <ListBoxItem id="during">During</ListBoxItem>
+                  <ListBoxItem id="after">After</ListBoxItem>
+                </ListBox>
+              </Select.Popover>
+            </Select>
 
             <div className="form-group">
               <label className="form-label" htmlFor="display_order">Display order</label>
@@ -132,31 +130,29 @@ export default function ModuleForm() {
                 type="number"
                 className="form-input"
                 value={form.display_order}
-                onChange={handleChange}
+                onChange={e => setForm(prev => ({ ...prev, display_order: e.target.value }))}
                 min={1}
               />
             </div>
           </div>
 
-          <div className="form-checkbox-row">
-            <input
-              id="published"
-              name="published"
-              type="checkbox"
-              checked={form.published}
-              onChange={handleChange}
-            />
-            <label htmlFor="published">Published (visible to consultants)</label>
+          <div style={{ marginBottom: 24 }}>
+            <Switch isSelected={form.published} onChange={field('published')}>
+              <Switch.Control><Switch.Thumb /></Switch.Control>
+              <span style={{ marginLeft: 8, fontSize: 14, fontWeight: 500 }}>
+                Published (visible to consultants)
+              </span>
+            </Switch>
           </div>
 
           <div style={{ display: 'flex', gap: 10 }}>
-            <button type="submit" className="btn btn-primary" disabled={saving}>
+            <Button type="submit" variant="primary" isDisabled={saving}>
               {saving ? 'Saving…' : 'Save module'}
-            </button>
+            </Button>
             <Link to="/admin/modules" className="btn btn-secondary">Cancel</Link>
           </div>
         </form>
-      </div>
+      </Card>
 
       {!isNew && (
         <div>
@@ -164,18 +160,13 @@ export default function ModuleForm() {
             <div className="section-title" style={{ margin: 0, border: 'none', paddingBottom: 0 }}>
               Lessons in this module
             </div>
-            <Link
-              to={`/admin/lessons/new?moduleId=${moduleId}`}
-              className="btn btn-secondary btn-sm"
-            >
-              + Add lesson
-            </Link>
+            <Link to={`/admin/lessons/new?moduleId=${moduleId}`} className="btn btn-secondary btn-sm">+ Add lesson</Link>
           </div>
 
           {lessons.length === 0 ? (
             <div className="empty-state">No lessons yet.</div>
           ) : (
-            <div className="card">
+            <Card>
               <table className="admin-table">
                 <thead>
                   <tr>
@@ -198,15 +189,13 @@ export default function ModuleForm() {
                         </span>
                       </td>
                       <td>
-                        <Link to={`/admin/lessons/${lesson.id}`} className="btn btn-secondary btn-sm">
-                          Edit
-                        </Link>
+                        <Link to={`/admin/lessons/${lesson.id}`} className="btn btn-secondary btn-sm">Edit</Link>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
-            </div>
+            </Card>
           )}
         </div>
       )}

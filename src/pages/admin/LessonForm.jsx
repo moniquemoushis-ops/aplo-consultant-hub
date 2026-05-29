@@ -1,5 +1,10 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import {
+  Button, Card, Spinner, Switch,
+  TextField, Label, Input, TextArea,
+  Select, ListBox, ListBoxItem,
+} from '@heroui/react'
 import { supabase } from '../../lib/supabase'
 
 const EMPTY_FORM = {
@@ -57,9 +62,8 @@ export default function LessonForm() {
     setLoading(false)
   }
 
-  function handleChange(e) {
-    const { name, value, type, checked } = e.target
-    setForm(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }))
+  function field(name) {
+    return (value) => setForm(prev => ({ ...prev, [name]: value }))
   }
 
   async function handleSubmit(e) {
@@ -88,7 +92,7 @@ export default function LessonForm() {
   if (loading) {
     return (
       <div className="loading-state">
-        <div className="spinner" />
+        <Spinner />
         Loading…
       </div>
     )
@@ -104,54 +108,53 @@ export default function LessonForm() {
 
       {error && <div className="error-msg">{error}</div>}
 
-      <div className="card" style={{ padding: 28 }}>
+      <Card style={{ padding: 28 }}>
         <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label className="form-label" htmlFor="title">Title</label>
-            <input
-              id="title"
-              name="title"
-              className="form-input"
-              value={form.title}
-              onChange={handleChange}
-              required
-              placeholder="e.g. Scoping the Engagement"
-            />
-          </div>
+          <TextField value={form.title} onChange={field('title')} isRequired fullWidth style={{ marginBottom: 20 }}>
+            <Label className="form-label">Title</Label>
+            <Input placeholder="e.g. Scoping the Engagement" />
+          </TextField>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-            <div className="form-group">
-              <label className="form-label" htmlFor="module_id">Module</label>
-              <select
-                id="module_id"
-                name="module_id"
-                className="form-select"
-                value={form.module_id}
-                onChange={handleChange}
-                required
-              >
-                <option value="">Select a module…</option>
-                {modules.map(m => (
-                  <option key={m.id} value={m.id}>{m.title}</option>
-                ))}
-              </select>
-            </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 20 }}>
+            <Select
+              selectedKey={form.module_id || null}
+              onSelectionChange={(key) => setForm(prev => ({ ...prev, module_id: String(key) }))}
+              isRequired
+              fullWidth
+            >
+              <Label className="form-label">Module</Label>
+              <Select.Trigger>
+                <Select.Value placeholder="Select a module…" />
+                <Select.Indicator />
+              </Select.Trigger>
+              <Select.Popover>
+                <ListBox>
+                  {modules.map(m => (
+                    <ListBoxItem key={m.id} id={m.id}>{m.title}</ListBoxItem>
+                  ))}
+                </ListBox>
+              </Select.Popover>
+            </Select>
 
-            <div className="form-group">
-              <label className="form-label" htmlFor="lesson_type">Type</label>
-              <select
-                id="lesson_type"
-                name="lesson_type"
-                className="form-select"
-                value={form.lesson_type}
-                onChange={handleChange}
-              >
-                <option value="article">Article</option>
-                <option value="checklist">Checklist</option>
-                <option value="tool">Tool</option>
-                <option value="template">Template</option>
-              </select>
-            </div>
+            <Select
+              selectedKey={form.lesson_type}
+              onSelectionChange={(key) => setForm(prev => ({ ...prev, lesson_type: String(key) }))}
+              fullWidth
+            >
+              <Label className="form-label">Type</Label>
+              <Select.Trigger>
+                <Select.Value />
+                <Select.Indicator />
+              </Select.Trigger>
+              <Select.Popover>
+                <ListBox>
+                  <ListBoxItem id="article">Article</ListBoxItem>
+                  <ListBoxItem id="checklist">Checklist</ListBoxItem>
+                  <ListBoxItem id="tool">Tool</ListBoxItem>
+                  <ListBoxItem id="template">Template</ListBoxItem>
+                </ListBox>
+              </Select.Popover>
+            </Select>
           </div>
 
           <div className="form-group">
@@ -162,48 +165,44 @@ export default function LessonForm() {
               type="number"
               className="form-input"
               value={form.display_order}
-              onChange={handleChange}
+              onChange={e => setForm(prev => ({ ...prev, display_order: e.target.value }))}
               min={1}
               style={{ maxWidth: 120 }}
             />
           </div>
 
-          <div className="form-checkbox-row">
-            <input
-              id="published"
-              name="published"
-              type="checkbox"
-              checked={form.published}
-              onChange={handleChange}
-            />
-            <label htmlFor="published">Published (visible to consultants)</label>
+          <div style={{ marginBottom: 20 }}>
+            <Switch isSelected={form.published} onChange={field('published')}>
+              <Switch.Control><Switch.Thumb /></Switch.Control>
+              <span style={{ marginLeft: 8, fontSize: 14, fontWeight: 500 }}>
+                Published (visible to consultants)
+              </span>
+            </Switch>
           </div>
 
-          <div className="form-group">
-            <label className="form-label" htmlFor="content">Content</label>
+          <TextField value={form.content} onChange={field('content')} fullWidth style={{ marginBottom: 20 }}>
+            <Label className="form-label">Content</Label>
             <p style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 6 }}>
-              Use <code style={{ background: 'var(--bg)', padding: '1px 5px', borderRadius: 4, fontSize: 12 }}>**bold**</code> for bold,{' '}
-              <code style={{ background: 'var(--bg)', padding: '1px 5px', borderRadius: 4, fontSize: 12 }}>*italic*</code> for italic,
-              and blank lines for paragraph breaks.
+              Use{' '}
+              <code style={{ background: 'var(--bg)', padding: '1px 5px', borderRadius: 4, fontSize: 12 }}>**bold**</code>
+              {' '}for bold,{' '}
+              <code style={{ background: 'var(--bg)', padding: '1px 5px', borderRadius: 4, fontSize: 12 }}>*italic*</code>
+              {' '}for italic, and blank lines for paragraph breaks.
             </p>
-            <textarea
-              id="content"
-              name="content"
-              className="form-textarea large"
-              value={form.content}
-              onChange={handleChange}
+            <TextArea
+              className="large"
               placeholder="Write your lesson content here…"
             />
-          </div>
+          </TextField>
 
           <div style={{ display: 'flex', gap: 10 }}>
-            <button type="submit" className="btn btn-primary" disabled={saving}>
+            <Button type="submit" variant="primary" isDisabled={saving}>
               {saving ? 'Saving…' : 'Save lesson'}
-            </button>
+            </Button>
             <Link to={backTo} className="btn btn-secondary">Cancel</Link>
           </div>
         </form>
-      </div>
+      </Card>
     </div>
   )
 }

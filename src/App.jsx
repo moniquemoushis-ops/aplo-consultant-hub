@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { Spinner } from '@heroui/react'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
 import AdminRoute from './components/AdminRoute'
@@ -23,7 +24,7 @@ function AppLayout() {
   if (loading) {
     return (
       <div className="loading-state" style={{ minHeight: '100vh' }}>
-        <div className="spinner" />
+        <Spinner />
         Loading…
       </div>
     )

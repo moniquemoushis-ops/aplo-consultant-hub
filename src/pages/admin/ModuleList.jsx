@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { Card, Spinner, Switch } from '@heroui/react'
 import { supabase } from '../../lib/supabase'
 import PhaseBadge from '../../components/PhaseBadge'
 
@@ -61,7 +62,7 @@ export default function ModuleList() {
   if (loading) {
     return (
       <div className="loading-state">
-        <div className="spinner" />
+        <Spinner />
         Loading modules…
       </div>
     )
@@ -74,20 +75,20 @@ export default function ModuleList() {
           <h1 className="page-title">Modules</h1>
           <p className="page-subtitle">Manage learning modules and their lessons</p>
         </div>
-        <Link to="/admin/modules/new" className="btn btn-primary">+ New module</Link>
+        <Link to="/admin/modules/new" className="btn btn-primary btn-sm">+ New module</Link>
       </div>
 
       {error && <div className="error-msg">{error}</div>}
 
       {modules.length === 0 ? (
-        <div className="card">
+        <Card>
           <div className="empty-state">
             No modules yet.{' '}
             <Link to="/admin/modules/new" style={{ color: 'var(--accent)' }}>Create the first one →</Link>
           </div>
-        </div>
+        </Card>
       ) : (
-        <div className="card">
+        <Card>
           <table className="admin-table">
             <thead>
               <tr>
@@ -107,22 +108,23 @@ export default function ModuleList() {
                   <td>{lessonCounts[mod.id] ?? 0}</td>
                   <td>{mod.display_order}</td>
                   <td>
-                    <button
-                      className={`toggle ${mod.published ? 'on' : ''}`}
-                      onClick={() => togglePublished(mod)}
+                    <Switch
+                      isSelected={mod.published}
+                      onChange={() => togglePublished(mod)}
                       aria-label={mod.published ? 'Unpublish' : 'Publish'}
-                    />
+                      size="sm"
+                    >
+                      <Switch.Control><Switch.Thumb /></Switch.Control>
+                    </Switch>
                   </td>
                   <td>
-                    <Link to={`/admin/modules/${mod.id}`} className="btn btn-secondary btn-sm">
-                      Edit
-                    </Link>
+                    <Link to={`/admin/modules/${mod.id}`} className="btn btn-secondary btn-sm">Edit</Link>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
-        </div>
+        </Card>
       )}
     </div>
   )

@@ -908,3 +908,125 @@ body {
 .mt-16 { margin-top: 16px; }
 .mt-24 { margin-top: 24px; }
 .mb-0 { margin-bottom: 0; }
+
+/* ─── HeroUI overrides ───────────────────────────────────────────────────────
+   HeroUI's component CSS lives in @layer components, which loses to any
+   unlayered rule here. We use data-slot attributes so overrides are
+   precisely targeted without touching non-HeroUI elements.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+/* Buttons */
+.button {
+  border-radius: 6px;
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 600;
+  padding: 8px 16px;
+  cursor: pointer;
+  line-height: 1.4;
+}
+.button--sm {
+  padding: 5px 12px;
+  font-size: 13px;
+}
+
+/* Inputs */
+[data-slot="input"] {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-family: var(--font-ui);
+  font-size: 14px;
+  color: var(--text-primary);
+  background: var(--surface);
+  outline: none;
+  transition: border-color 120ms, box-shadow 120ms;
+  display: block;
+}
+[data-slot="input"]:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Textareas */
+[data-slot="textarea"] {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-family: var(--font-ui);
+  font-size: 14px;
+  color: var(--text-primary);
+  background: var(--surface);
+  outline: none;
+  resize: vertical;
+  min-height: 120px;
+  line-height: 1.6;
+  transition: border-color 120ms, box-shadow 120ms;
+  display: block;
+}
+[data-slot="textarea"]:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+[data-slot="textarea"].large {
+  min-height: 320px;
+  font-family: var(--font-content);
+  font-size: 15px;
+}
+
+/* Labels */
+[data-slot="label"] {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: block;
+  margin-bottom: 6px;
+}
+
+/* Select trigger */
+[data-slot="select-trigger"] {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-family: var(--font-ui);
+  font-size: 14px;
+  background: var(--surface);
+  color: var(--text-primary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: border-color 120ms;
+}
+[data-slot="select-trigger"]:hover {
+  border-color: #c5c3bc;
+}
+[data-slot="select-trigger"][data-focused] {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Progress bar */
+[data-slot="progress-bar-track"] {
+  background: var(--border);
+  border-radius: 100px;
+  height: 8px;
+  overflow: hidden;
+  width: 100%;
+}
+[data-slot="progress-bar-fill"] {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 100px;
+  transition: width 400ms ease;
+}
+
+/* Separator */
+[data-slot="separator"] {
+  background: var(--border);
+  height: 1px;
+  border: none;
+}

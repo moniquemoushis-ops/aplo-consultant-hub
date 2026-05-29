@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Button, Card, Spinner, Tabs, Tab, TabList, TabPanel, TextField, TextArea, Label } from '@heroui/react'
 import { supabase } from '../../lib/supabase'
 import StatusBadge from '../../components/StatusBadge'
 
@@ -62,6 +63,77 @@ export default function Questions() {
     setSubmitting(null)
   }
 
+  function renderQuestions() {
+    if (loading) {
+      return (
+        <div className="loading-state">
+          <Spinner />
+          Loading questions…
+        </div>
+      )
+    }
+
+    if (questions.length === 0) {
+      return <div className="empty-state">No questions found.</div>
+    }
+
+    return questions.map(q => (
+      <Card key={q.id} className="question-card">
+        <div
+          className="question-card-header"
+          onClick={() => setExpanded(expanded === q.id ? null : q.id)}
+        >
+          <div style={{ flex: 1 }}>
+            <div className="question-meta">
+              {q.lessons?.title ?? 'Unknown lesson'} · {fmtDate(q.created_at)}
+            </div>
+            <div className="question-text">{q.question_text}</div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
+            <StatusBadge status={q.status} />
+            <button className="question-expand">
+              {expanded === q.id ? '−' : '+'}
+            </button>
+          </div>
+        </div>
+
+        {expanded === q.id && (
+          <div className="question-answer-area" style={{ paddingTop: 16 }}>
+            {q.answer_text && (
+              <div>
+                <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 6 }}>
+                  ANSWER
+                </div>
+                <div className="question-existing-answer">{q.answer_text}</div>
+              </div>
+            )}
+
+            {q.status !== 'answered' && (
+              <>
+                <TextField
+                  value={answers[q.id] ?? ''}
+                  onChange={(val) => setAnswers(prev => ({ ...prev, [q.id]: val }))}
+                  fullWidth
+                  style={{ marginBottom: 10 }}
+                >
+                  <TextArea placeholder="Write your answer…" rows={4} />
+                </TextField>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  onPress={() => handleAnswer(q.id)}
+                  isDisabled={submitting === q.id}
+                >
+                  {submitting === q.id ? 'Submitting…' : 'Submit answer'}
+                </Button>
+              </>
+            )}
+          </div>
+        )}
+      </Card>
+    ))
+  }
+
   return (
     <div className="page-fade page-inner">
       <div className="page-header">
@@ -71,82 +143,20 @@ export default function Questions() {
 
       {error && <div className="error-msg">{error}</div>}
 
-      <div className="filter-tabs">
+      <Tabs selectedKey={tab} onSelectionChange={(key) => setTab(String(key))}>
+        <TabList style={{ marginBottom: 24 }}>
+          {TABS.map(t => (
+            <Tab key={t} id={t}>
+              {t.charAt(0).toUpperCase() + t.slice(1)}
+            </Tab>
+          ))}
+        </TabList>
         {TABS.map(t => (
-          <button
-            key={t}
-            className={`filter-tab ${tab === t ? 'active' : ''}`}
-            onClick={() => setTab(t)}
-          >
-            {t.charAt(0).toUpperCase() + t.slice(1)}
-          </button>
+          <TabPanel key={t} id={t}>
+            {renderQuestions()}
+          </TabPanel>
         ))}
-      </div>
-
-      {loading ? (
-        <div className="loading-state">
-          <div className="spinner" />
-          Loading questions…
-        </div>
-      ) : questions.length === 0 ? (
-        <div className="empty-state">No questions found.</div>
-      ) : (
-        questions.map(q => (
-          <div key={q.id} className="card question-card">
-            <div
-              className="question-card-header"
-              onClick={() => setExpanded(expanded === q.id ? null : q.id)}
-            >
-              <div style={{ flex: 1 }}>
-                <div className="question-meta">
-                  {q.lessons?.title ?? 'Unknown lesson'} · {fmtDate(q.created_at)}
-                </div>
-                <div className="question-text">{q.question_text}</div>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
-                <StatusBadge status={q.status} />
-                <button className="question-expand">
-                  {expanded === q.id ? '−' : '+'}
-                </button>
-              </div>
-            </div>
-
-            {expanded === q.id && (
-              <div className="question-answer-area" style={{ paddingTop: 16 }}>
-                {q.answer_text && (
-                  <div>
-                    <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 6 }}>
-                      ANSWER
-                    </div>
-                    <div className="question-existing-answer">{q.answer_text}</div>
-                  </div>
-                )}
-
-                {q.status !== 'answered' && (
-                  <>
-                    <div className="form-group" style={{ marginBottom: 10 }}>
-                      <textarea
-                        className="form-textarea"
-                        placeholder="Write your answer…"
-                        rows={4}
-                        value={answers[q.id] ?? ''}
-                        onChange={e => setAnswers(prev => ({ ...prev, [q.id]: e.target.value }))}
-                      />
-                    </div>
-                    <button
-                      className="btn btn-primary btn-sm"
-                      onClick={() => handleAnswer(q.id)}
-                      disabled={submitting === q.id}
-                    >
-                      {submitting === q.id ? 'Submitting…' : 'Submit answer'}
-                    </button>
-                  </>
-                )}
-              </div>
-            )}
-          </div>
-        ))
-      )}
+      </Tabs>
     </div>
   )
 }

@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { Card, Spinner } from '@heroui/react'
 import { supabase } from '../lib/supabase'
 import PhaseBadge from '../components/PhaseBadge'
 
-// Placeholder modules shown when no data exists in Supabase yet
-// Replace with real content once modules are added in the admin panel
 const PLACEHOLDER_MODULES = [
   {
     id: 'placeholder-1',
@@ -48,7 +47,6 @@ export default function ModuleLibrary() {
       return
     }
 
-    // Attach lesson counts
     if (data && data.length > 0) {
       const ids = data.map(m => m.id)
       const { data: lessons } = await supabase
@@ -64,7 +62,6 @@ export default function ModuleLibrary() {
 
       setModules(data.map(m => ({ ...m, lesson_count: countMap[m.id] ?? 0 })))
     } else {
-      // No data yet — show placeholders so the page renders with content
       setModules(PLACEHOLDER_MODULES)
     }
 
@@ -74,7 +71,7 @@ export default function ModuleLibrary() {
   if (loading) {
     return (
       <div className="loading-state">
-        <div className="spinner" />
+        <Spinner />
         Loading modules…
       </div>
     )
@@ -104,16 +101,18 @@ export default function ModuleLibrary() {
                 <Link
                   key={mod.id}
                   to={mod.id.startsWith('placeholder') ? '/learn' : `/learn/${mod.id}`}
-                  className="card module-card"
+                  style={{ textDecoration: 'none' }}
                 >
-                  <div className="module-card-title">{mod.title}</div>
-                  <div className="module-card-desc">{mod.description}</div>
-                  <div className="module-card-meta">
-                    <span className="module-card-count">
-                      {mod.lesson_count} {mod.lesson_count === 1 ? 'lesson' : 'lessons'}
-                    </span>
-                    <PhaseBadge phase={mod.phase} />
-                  </div>
+                  <Card className="module-card">
+                    <div className="module-card-title">{mod.title}</div>
+                    <div className="module-card-desc">{mod.description}</div>
+                    <div className="module-card-meta">
+                      <span className="module-card-count">
+                        {mod.lesson_count} {mod.lesson_count === 1 ? 'lesson' : 'lessons'}
+                      </span>
+                      <PhaseBadge phase={mod.phase} />
+                    </div>
+                  </Card>
                 </Link>
               ))}
             </div>

@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
+import { Button, Separator, Spinner, TextField, TextArea, Label } from '@heroui/react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import LessonTypeBadge from '../components/LessonTypeBadge'
 
-// Convert simple markdown-like syntax to React elements
 function renderContent(text) {
   if (!text) return null
 
@@ -53,7 +53,6 @@ export default function LessonView() {
       setLesson(lessonRes.data)
       setModuleName(moduleRes.data?.title ?? '')
 
-      // Record lesson view (ignore if duplicate — RLS will handle or we check manually)
       const { data: existing } = await supabase
         .from('lesson_views')
         .select('id')
@@ -96,7 +95,7 @@ export default function LessonView() {
   if (loading) {
     return (
       <div className="loading-state">
-        <div className="spinner" />
+        <Spinner />
         Loading lesson…
       </div>
     )
@@ -132,7 +131,7 @@ export default function LessonView() {
         )}
       </div>
 
-      <div className="divider" />
+      <Separator style={{ margin: '28px 0' }} />
 
       <div>
         <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 6 }}>
@@ -147,19 +146,18 @@ export default function LessonView() {
         ) : (
           <form onSubmit={handleQuestionSubmit}>
             {questionError && <div className="error-msg">{questionError}</div>}
-            <div className="form-group" style={{ marginBottom: 12 }}>
-              <textarea
-                className="form-textarea"
-                placeholder="Ask your question…"
-                value={question}
-                onChange={e => setQuestion(e.target.value)}
-                rows={4}
-                required
-              />
-            </div>
-            <button type="submit" className="btn btn-primary" disabled={submitting}>
+            <TextField
+              value={question}
+              onChange={setQuestion}
+              isRequired
+              fullWidth
+              style={{ marginBottom: 12 }}
+            >
+              <TextArea placeholder="Ask your question…" rows={4} />
+            </TextField>
+            <Button type="submit" variant="primary" isDisabled={submitting}>
               {submitting ? 'Submitting…' : 'Submit question'}
-            </button>
+            </Button>
           </form>
         )}
       </div>

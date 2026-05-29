@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { Button, Card, Spinner } from '@heroui/react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import ProgressBar from '../components/ProgressBar'
 import PhaseBadge from '../components/PhaseBadge'
 
-// Placeholder recent lessons shown when no lesson_views exist yet
 const PLACEHOLDER_RECENT = [
   { id: 'p1', title: 'Scoping the Engagement', moduleId: 'p-mod-1', moduleName: 'Engagement Foundations' },
   { id: 'p2', title: 'Setting Client Expectations', moduleId: 'p-mod-1', moduleName: 'Engagement Foundations' },
@@ -18,13 +18,11 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
-  // Consultant state
   const [viewedCount, setViewedCount] = useState(0)
   const [totalLessons, setTotalLessons] = useState(0)
   const [phaseCounts, setPhaseCounts] = useState({ before: 0, during: 0, after: 0 })
   const [recentLessons, setRecentLessons] = useState([])
 
-  // Admin state
   const [stats, setStats] = useState({ modules: 0, lessons: 0, openQuestions: 0 })
   const [recentQuestions, setRecentQuestions] = useState([])
 
@@ -105,7 +103,7 @@ export default function Dashboard() {
   if (loading) {
     return (
       <div className="loading-state">
-        <div className="spinner" />
+        <Spinner />
         Loading dashboard…
       </div>
     )
@@ -137,9 +135,9 @@ export default function Dashboard() {
 function ConsultantDashboard({ viewedCount, totalLessons, phaseCounts, recentLessons }) {
   return (
     <>
-      <div className="card" style={{ padding: 20, marginBottom: 24 }}>
+      <Card style={{ padding: 20, marginBottom: 24 }}>
         <ProgressBar value={viewedCount} max={totalLessons || 1} label="Lessons completed" />
-      </div>
+      </Card>
 
       <div className="phase-cards">
         {[
@@ -147,26 +145,26 @@ function ConsultantDashboard({ viewedCount, totalLessons, phaseCounts, recentLes
           { key: 'during', label: 'During', count: phaseCounts.during },
           { key: 'after', label: 'After', count: phaseCounts.after },
         ].map(({ key, label, count }) => (
-          <div key={key} className="card phase-card">
+          <Card key={key} className="phase-card">
             <div className={`phase-card-label ${key}`}>{label}</div>
             <div className="phase-card-count">{count}</div>
             <div className="phase-card-sub">{count === 1 ? 'module' : 'modules'}</div>
             <Link to="/learn" className="btn btn-secondary btn-sm">Go to modules</Link>
-          </div>
+          </Card>
         ))}
       </div>
 
       <div>
         <div className="section-title">Continue learning</div>
         {recentLessons.length === 0 ? (
-          <div className="card">
+          <Card>
             <div className="empty-state">
               You haven't viewed any lessons yet.{' '}
               <Link to="/learn" style={{ color: 'var(--accent)' }}>Browse modules →</Link>
             </div>
-          </div>
+          </Card>
         ) : (
-          <div className="card recent-list">
+          <Card className="recent-list">
             {recentLessons.map(lesson => (
               <Link
                 key={lesson.id}
@@ -179,7 +177,7 @@ function ConsultantDashboard({ viewedCount, totalLessons, phaseCounts, recentLes
                 </div>
               </Link>
             ))}
-          </div>
+          </Card>
         )}
       </div>
     </>
@@ -194,18 +192,18 @@ function AdminDashboard({ stats, recentQuestions }) {
   return (
     <>
       <div className="stats-row">
-        <div className="card stat-card">
+        <Card className="stat-card">
           <div className="stat-label">Published modules</div>
           <div className="stat-value">{stats.modules}</div>
-        </div>
-        <div className="card stat-card">
+        </Card>
+        <Card className="stat-card">
           <div className="stat-label">Published lessons</div>
           <div className="stat-value">{stats.lessons}</div>
-        </div>
-        <div className="card stat-card">
+        </Card>
+        <Card className="stat-card">
           <div className="stat-label">Open questions</div>
           <div className="stat-value">{stats.openQuestions}</div>
-        </div>
+        </Card>
       </div>
 
       <div style={{ display: 'flex', gap: 12, marginBottom: 32 }}>
@@ -216,11 +214,11 @@ function AdminDashboard({ stats, recentQuestions }) {
       <div>
         <div className="section-title">Recent open questions</div>
         {recentQuestions.length === 0 ? (
-          <div className="card">
+          <Card>
             <div className="empty-state">No open questions right now.</div>
-          </div>
+          </Card>
         ) : (
-          <div className="card recent-list">
+          <Card className="recent-list">
             {recentQuestions.map(q => (
               <Link key={q.id} to="/admin/questions" className="recent-item">
                 <div style={{ flex: 1 }}>
@@ -230,7 +228,7 @@ function AdminDashboard({ stats, recentQuestions }) {
                 </div>
               </Link>
             ))}
-          </div>
+          </Card>
         )}
       </div>
     </>

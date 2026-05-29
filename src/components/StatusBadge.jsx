@@ -1,3 +1,11 @@
+import { Chip } from '@heroui/react'
+
+const colorMap = {
+  open: 'warning',
+  answered: 'success',
+  dismissed: 'default',
+}
+
 const labels = {
   open: 'Open',
   answered: 'Answered',
@@ -6,8 +14,8 @@ const labels = {
 
 export default function StatusBadge({ status }) {
   return (
-    <span className={`badge badge-${status}`}>
+    <Chip color={colorMap[status] ?? 'default'} variant="soft" size="sm">
       {labels[status] ?? status}
-    </span>
+    </Chip>
   )
 }

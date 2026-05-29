@@ -1,3 +1,12 @@
+import { Chip } from '@heroui/react'
+
+const colorMap = {
+  article: 'default',
+  checklist: 'accent',
+  tool: 'danger',
+  template: 'warning',
+}
+
 const labels = {
   article: 'Article',
   checklist: 'Checklist',
@@ -7,8 +16,8 @@ const labels = {
 
 export default function LessonTypeBadge({ type }) {
   return (
-    <span className={`badge badge-${type}`}>
+    <Chip color={colorMap[type] ?? 'default'} variant="soft" size="sm">
       {labels[type] ?? type}
-    </span>
+    </Chip>
   )
 }

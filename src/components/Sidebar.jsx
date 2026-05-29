@@ -1,4 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom'
+import { Button } from '@heroui/react'
 import { useAuth } from '../context/AuthContext'
 
 function IconDashboard() {
@@ -94,9 +95,14 @@ export default function Sidebar() {
 
       <div className="sidebar-footer">
         <div className="sidebar-user-name">{profile?.full_name ?? 'Loading…'}</div>
-        <button className="sidebar-logout" onClick={handleLogout}>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="sidebar-logout"
+          onPress={handleLogout}
+        >
           Sign out
-        </button>
+        </Button>
       </div>
     </aside>
   )

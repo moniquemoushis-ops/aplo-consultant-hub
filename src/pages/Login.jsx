@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Button, TextField, Label, Input, Card } from '@heroui/react'
 import { supabase } from '../lib/supabase'
 
 export default function Login() {
@@ -26,45 +27,48 @@ export default function Login() {
 
   return (
     <div className="login-page">
-      <div className="card login-card">
+      <Card className="login-card">
         <div className="login-logo">Aplo Consultant Hub</div>
         <p className="login-tagline">Sign in to access your learning platform</p>
 
         {error && <div className="error-msg">{error}</div>}
 
         <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label className="form-label" htmlFor="email">Email</label>
-            <input
-              id="email"
-              type="email"
-              className="form-input"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              required
-              autoFocus
-              placeholder="you@example.com"
-            />
-          </div>
+          <TextField
+            value={email}
+            onChange={setEmail}
+            type="email"
+            isRequired
+            autoFocus
+            fullWidth
+            style={{ marginBottom: 20 }}
+          >
+            <Label className="form-label">Email</Label>
+            <Input placeholder="you@example.com" />
+          </TextField>
 
-          <div className="form-group">
-            <label className="form-label" htmlFor="password">Password</label>
-            <input
-              id="password"
-              type="password"
-              className="form-input"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              required
-              placeholder="••••••••"
-            />
-          </div>
+          <TextField
+            value={password}
+            onChange={setPassword}
+            type="password"
+            isRequired
+            fullWidth
+            style={{ marginBottom: 24 }}
+          >
+            <Label className="form-label">Password</Label>
+            <Input placeholder="••••••••" />
+          </TextField>
 
-          <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: 8 }} disabled={loading}>
+          <Button
+            type="submit"
+            variant="primary"
+            fullWidth
+            isDisabled={loading}
+          >
             {loading ? 'Signing in…' : 'Sign in'}
-          </button>
+          </Button>
         </form>
-      </div>
+      </Card>
     </div>
   )
 }

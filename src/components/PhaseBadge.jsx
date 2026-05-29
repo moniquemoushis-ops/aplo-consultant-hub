@@ -1,3 +1,11 @@
+import { Chip } from '@heroui/react'
+
+const colorMap = {
+  before: 'warning',
+  during: 'accent',
+  after: 'success',
+}
+
 const labels = {
   before: 'Before',
   during: 'During',
@@ -6,8 +14,8 @@ const labels = {
 
 export default function PhaseBadge({ phase }) {
   return (
-    <span className={`badge badge-${phase}`}>
+    <Chip color={colorMap[phase] ?? 'default'} variant="soft" size="sm">
       {labels[phase] ?? phase}
-    </span>
+    </Chip>
   )
 }
