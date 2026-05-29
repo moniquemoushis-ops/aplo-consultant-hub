@@ -88,13 +88,13 @@ export default function Questions() {
           className="question-card-header"
           onClick={() => setExpanded(expanded === q.id ? null : q.id)}
         >
-          <div style={{ flex: 1 }}>
+          <div className="flex-1">
             <div className="question-meta">
               {q.lessons?.title ?? 'Unknown lesson'} · {fmtDate(q.created_at)}
             </div>
             <div className="question-text">{q.question_text}</div>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
+          <div className="flex items-center gap-2.5 shrink-0">
             {(() => {
                       const c = STATUS_CHIP[q.status] ?? { color: 'default', label: q.status }
                       return <Chip color={c.color} variant="soft" size="sm">{c.label}</Chip>
@@ -106,10 +106,10 @@ export default function Questions() {
         </div>
 
         {expanded === q.id && (
-          <div className="question-answer-area" style={{ paddingTop: 16 }}>
+          <div className="question-answer-area pt-4">
             {q.answer_text && (
               <div>
-                <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 6 }}>
+                <div className="text-xs font-bold text-[var(--text-secondary)] mb-1.5">
                   ANSWER
                 </div>
                 <div className="question-existing-answer">{q.answer_text}</div>
@@ -122,7 +122,7 @@ export default function Questions() {
                   value={answers[q.id] ?? ''}
                   onChange={(val) => setAnswers(prev => ({ ...prev, [q.id]: val }))}
                   fullWidth
-                  style={{ marginBottom: 10 }}
+                  className="mb-2.5"
                 >
                   <TextArea placeholder="Write your answer…" rows={4} />
                 </TextField>
@@ -152,7 +152,7 @@ export default function Questions() {
       {error && <div className="error-msg">{error}</div>}
 
       <Tabs selectedKey={tab} onSelectionChange={(key) => setTab(String(key))}>
-        <TabList style={{ marginBottom: 24 }}>
+        <TabList className="mb-6">
           {TABS.map(t => (
             <Tab key={t} id={t}>
               {t.charAt(0).toUpperCase() + t.slice(1)}

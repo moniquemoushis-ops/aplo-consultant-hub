@@ -89,7 +89,7 @@ export default function ModuleList() {
         <Card>
           <div className="empty-state">
             No modules yet.{' '}
-            <Link to="/admin/modules/new" style={{ color: 'var(--accent)' }}>Create the first one →</Link>
+            <Link to="/admin/modules/new" className="text-[var(--accent)]">Create the first one →</Link>
           </div>
         </Card>
       ) : (
@@ -108,7 +108,7 @@ export default function ModuleList() {
             <tbody>
               {modules.map(mod => (
                 <tr key={mod.id}>
-                  <td style={{ fontWeight: 600 }}>{mod.title}</td>
+                  <td className="font-semibold">{mod.title}</td>
                   <td>
                     {(() => {
                       const c = PHASE_CHIP[mod.phase] ?? { color: 'default', label: mod.phase }

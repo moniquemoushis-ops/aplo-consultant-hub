@@ -160,8 +160,7 @@ export default function LessonForm() {
           <TextField
             value={String(form.display_order)}
             onChange={field('display_order')}
-            className="mb-5"
-            style={{ maxWidth: 120 }}
+            className="mb-5 max-w-[120px]"
           >
             <Label>Display order</Label>
             <Input type="number" min={1} />

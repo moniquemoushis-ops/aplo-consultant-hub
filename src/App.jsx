@@ -23,7 +23,7 @@ function AppLayout() {
 
   if (loading) {
     return (
-      <div className="loading-state" style={{ minHeight: '100vh' }}>
+      <div className="loading-state min-h-screen">
         <Spinner />
         Loading…
       </div>

@@ -156,7 +156,7 @@ export default function ModuleForm() {
       {!isNew && (
         <div>
           <div className="toolbar">
-            <div className="section-title" style={{ margin: 0, border: 'none', paddingBottom: 0 }}>
+            <div className="section-title !mb-0 !pb-0 !border-b-0">
               Lessons in this module
             </div>
             <Link to={`/admin/lessons/new?moduleId=${moduleId}`} className="btn btn-secondary btn-sm">
@@ -183,7 +183,7 @@ export default function ModuleForm() {
                     const c = TYPE_CHIP[lesson.lesson_type] ?? { color: 'default', label: lesson.lesson_type }
                     return (
                       <tr key={lesson.id}>
-                        <td style={{ fontWeight: 600 }}>{lesson.title}</td>
+                        <td className="font-semibold">{lesson.title}</td>
                         <td><Chip color={c.color} variant="soft" size="sm">{c.label}</Chip></td>
                         <td>{lesson.display_order}</td>
                         <td>

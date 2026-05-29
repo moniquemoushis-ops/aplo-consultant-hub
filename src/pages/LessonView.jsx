@@ -130,23 +130,23 @@ export default function LessonView() {
         })()}
       </div>
 
-      <h1 className="page-title" style={{ marginBottom: 32 }}>{lesson.title}</h1>
+      <h1 className="page-title mb-8">{lesson.title}</h1>
 
       <div className="lesson-content">
         {lesson.content ? renderContent(lesson.content) : (
-          <p style={{ color: 'var(--text-secondary)', fontStyle: 'italic' }}>
+          <p className="text-[var(--text-secondary)] italic">
             No content yet.
           </p>
         )}
       </div>
 
-      <Separator style={{ margin: '28px 0' }} />
+      <Separator className="my-7" />
 
       <div>
-        <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 6 }}>
+        <h3 className="text-base font-bold mb-1.5">
           Have a question about this lesson?
         </h3>
-        <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginBottom: 16 }}>
+        <p className="text-sm text-[var(--text-secondary)] mb-4">
           Submit your question and a consultant will respond.
         </p>
 
@@ -160,7 +160,7 @@ export default function LessonView() {
               onChange={setQuestion}
               isRequired
               fullWidth
-              style={{ marginBottom: 12 }}
+              className="mb-3"
             >
               <TextArea placeholder="Ask your question…" rows={4} />
             </TextField>

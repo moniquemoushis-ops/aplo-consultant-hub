@@ -134,7 +134,7 @@ export default function Dashboard() {
 function ConsultantDashboard({ viewedCount, totalLessons, phaseCounts, recentLessons }) {
   return (
     <>
-      <Card style={{ padding: 20, marginBottom: 24 }}>
+      <Card className="p-5 mb-6">
         <ProgressBar value={viewedCount} max={totalLessons || 1} label="Lessons completed" />
       </Card>
 
@@ -159,7 +159,7 @@ function ConsultantDashboard({ viewedCount, totalLessons, phaseCounts, recentLes
           <Card>
             <div className="empty-state">
               You haven't viewed any lessons yet.{' '}
-              <Link to="/learn" style={{ color: 'var(--accent)' }}>Browse modules →</Link>
+              <Link to="/learn" className="text-[var(--accent)]">Browse modules →</Link>
             </div>
           </Card>
         ) : (
@@ -205,7 +205,7 @@ function AdminDashboard({ stats, recentQuestions }) {
         </Card>
       </div>
 
-      <div style={{ display: 'flex', gap: 12, marginBottom: 32 }}>
+      <div className="flex gap-3 mb-8">
         <Link to="/admin/modules" className="btn btn-primary">Manage modules</Link>
         <Link to="/admin/questions" className="btn btn-secondary">View questions</Link>
       </div>
@@ -220,7 +220,7 @@ function AdminDashboard({ stats, recentQuestions }) {
           <Card className="recent-list">
             {recentQuestions.map(q => (
               <Link key={q.id} to="/admin/questions" className="recent-item">
-                <div style={{ flex: 1 }}>
+                <div className="flex-1">
                   <div className="recent-item-label">{q.lessons?.title ?? 'Unknown lesson'}</div>
                   <div className="recent-item-title">{q.question_text}</div>
                   <div className="recent-item-date">{fmtDate(q.created_at)}</div>
